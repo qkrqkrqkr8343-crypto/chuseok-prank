@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>100만원 받기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #1b2140;
+    --sky-2: #262c52;
+    --moon: #f6cf72;
+    --moon-glow: #fbe4a2;
+    --cream: #fdf6e6;
+    --ink: #2a2440;
+    --accent: #e8823a;
+    --accent-2: #7fb88a;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: inherit; }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    font-family: 'Gowun Dodum', 'Apple SD Gothic Neo', sans-serif;
+    background: radial-gradient(ellipse at 50% -10%, var(--sky-2), var(--sky) 60%);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+  html, body { height: 100%; }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.5px 1.5px at 70% 15%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 35% 70%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.5px 1.5px at 55% 40%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 10% 85%, rgba(255,255,255,.4), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stage {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 32px 24px 48px;
+    text-align: center;
+  }
+
+  .moon {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--moon-glow), var(--moon) 60%);
+    box-shadow: 0 0 40px 8px rgba(246, 207, 114, 0.35);
+  }
+
+  h1 {
+    font-family: 'Gowun Batang', serif;
+    font-weight: 700;
+    font-size: clamp(28px, 8vw, 36px);
+    line-height: 1.35;
+    margin: 0 0 12px;
+  }
+
+  p.sub {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(253, 246, 230, 0.75);
+    margin: 0 0 32px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 18px;
+    border: none;
+    border-radius: 999px;
+    padding: 16px 36px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  button:active { transform: scale(0.96); }
+  button:focus-visible { outline: 3px solid var(--moon); outline-offset: 3px; }
+
+  #primary-btn {
+    background: linear-gradient(135deg, var(--accent), #f2a95c);
+    color: #2a1608;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(232, 130, 58, 0.35);
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .choice-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .choice-row button {
+    flex: 1;
+    max-width: 140px;
+  }
+  #yes-btn {
+    background: var(--accent-2);
+    color: #103018;
+    font-weight: 700;
+  }
+  #no-btn {
+    background: transparent;
+    color: var(--cream);
+    border: 1.5px solid rgba(253, 246, 230, 0.4);
+  }
+
+  .heart {
+    font-size: 64px;
+    margin: 8px 0 4px;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.4); opacity: 0; }
+    70% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
+  .retry-msg {
+    font-size: 15px;
+    color: rgba(253, 246, 230, 0.7);
+    margin-top: 14px;
+    min-height: 20px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .heart { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="stage">
+
+    <div id="screen-1" class="screen active">
+      <div class="moon"></div>
+      <h1>100만원 받기 🎁</h1>
+      <p class="sub">아래 버튼을 누르면 확인할 수 있어요</p>
+      <button id="primary-btn" onclick="showScreen(2)">지금 받기</button>
+    </div>
+
+    <div id="screen-2" class="screen">
+      <div class="moon"></div>
+      <h1>사실 100만원은 없어요 😄<br>대신 이 말을 전해요</h1>
+      <p class="sub">풍성한 한가위, 마음만은 늘 넉넉하시길 바라요.<br>좋은 추석 되세요!</p>
+      <div class="choice-row">
+        <button id="yes-btn" onclick="pickYes()">네 !</button>
+        <button id="no-btn" onclick="pickNo()">아니오 !</button>
+      </div>
+      <div id="retry-msg" class="retry-msg"></div>
+      <div id="heart-slot"></div>
+    </div>
+
+  </div>
+
+  <script>
+    function showScreen(n) {
+      document.querySelectorAll('.screen').forEach(function(el){ el.classList.remove('active'); });
+      document.getElementById('screen-' + n).classList.add('active');
+    }
+
+    function pickYes() {
+      document.getElementById('retry-msg').textContent = '';
+      var slot = document.getElementById('heart-slot');
+      slot.innerHTML = '<div class="heart">🧡</div>';
+    }
+
+    function pickNo() {
+      document.getElementById('heart-slot').innerHTML = '';
+      document.getElementById('retry-msg').textContent = '다시 골라주세요';
+    }
+  </script>
+</body>
+</html>
